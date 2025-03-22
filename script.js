@@ -1,7 +1,7 @@
 // getting places from APIs
 function loadPlaces(position) {
     const params = {
-        radius: 300,    // search places not farther than this value (in meters)
+        radius: 3,    // search places not farther than this value (in meters)
         clientId: 'B1MSOJW31HLB5MELFQIIREIZ3LT5KW5ZSH13WDAKTZOXJORX',
         clientSecret: 'YA4JM02LDIC5JMXFZBB0XOCUVRS30THFWJZFJKHMXXX43NM5',
         version: '20300101',    // foursquare versioning, required but unuseful for this demo
@@ -18,16 +18,23 @@ function loadPlaces(position) {
         &client_secret=${params.clientSecret}
         &limit=30 
         &v=${params.version}`;
-    return fetch(endpoint)
+
+     return fetch(endpoint)
         .then((res) => {
-            return res.json()
-                .then((resp) => {
-                    return resp.response.venues;
-                })
+            return res.json();
+        })
+        .then((resp) => {
+            console.log('API Response:', resp); // Log the full response
+            if (resp && resp.response && resp.response.venues) {
+                return resp.response.venues;
+            } else {
+                throw new Error('Invalid API response structure');
+            }
         })
         .catch((err) => {
             console.error('Error with places API', err);
-        })
+            return []; // Return an empty array to avoid breaking the forEach loop
+        });
 };
 
 
